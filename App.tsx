@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Type, Part } from '@google/genai';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import firebase from 'firebase/compat/app';
 import { auth } from './services/firebaseService';
 
 import SidebarNav from './components/ui/SidebarNav';
@@ -47,7 +47,7 @@ import { selectAgentForTask } from './utils/agentSelection';
 import { MRV_AGENTS } from './constants';
 
 const App: React.FC = () => {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<firebase.User | null>(null);
     const [authLoading, setAuthLoading] = useState(true);
     
     const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
@@ -102,7 +102,7 @@ const App: React.FC = () => {
     ]);
     
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
             setUser(user);
             setAuthLoading(false);
         });

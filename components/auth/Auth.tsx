@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import { 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
-    GoogleAuthProvider, 
-    signInWithPopup 
-} from 'firebase/auth';
+import firebase from 'firebase/compat/app';
 import { auth } from '../../services/firebaseService';
 
 const Auth: React.FC = () => {
@@ -21,9 +16,9 @@ const Auth: React.FC = () => {
 
         try {
             if (isLogin) {
-                await signInWithEmailAndPassword(auth, email, password);
+                await auth.signInWithEmailAndPassword(email, password);
             } else {
-                await createUserWithEmailAndPassword(auth, email, password);
+                await auth.createUserWithEmailAndPassword(email, password);
             }
         } catch (err: any) {
             setError(err.message);
@@ -35,9 +30,9 @@ const Auth: React.FC = () => {
     const handleGoogleSignIn = async () => {
         setError('');
         setLoading(true);
-        const provider = new GoogleAuthProvider();
+        const provider = new firebase.auth.GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
+            await auth.signInWithPopup(provider);
         } catch(err: any) {
             setError(err.message);
         } finally {
