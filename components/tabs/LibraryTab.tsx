@@ -1,11 +1,21 @@
 import React from 'react';
 import { DOCUMENT_TEMPLATES } from '../../constants';
 
+/**
+ * @en A tab that displays a library of predefined document templates.
+ *     These templates can be used in the "Generator" tab to quickly create high-quality documents.
+ * @de Ein Tab, der eine Bibliothek vordefinierter Dokumentenvorlagen anzeigt.
+ *     Diese Vorlagen können im Tab "Generator" verwendet werden, um schnell und effizient
+ *     qualitativ hochwertige Dokumente zu erstellen.
+ * @returns A React functional component.
+ */
 const LibraryTab: React.FC = () => {
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-white">Prompt-Bibliothek</h1>
+            <h1 className="text-3xl font-bold text-white">Prompt Library / Prompt-Bibliothek</h1>
             <p className="text-gray-400">
+                Use predefined templates to create high-quality documents quickly and efficiently.
+                The templates are available in the "Generator" tab. /
                 Nutzen Sie vordefinierte Vorlagen, um schnell und effizient qualitativ hochwertige Dokumente zu erstellen.
                 Die Vorlagen sind im Tab "Generator" verfügbar.
             </p>

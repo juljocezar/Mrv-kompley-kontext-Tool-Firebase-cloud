@@ -1,6 +1,14 @@
 import React from 'react';
 import { legalResources, otherResources } from '../../legalResources';
 
+/**
+ * @en An accordion item component for displaying collapsible content.
+ * @de Eine Akkordeon-Komponente zur Anzeige von einklappbarem Inhalt.
+ * @param props - The component props.
+ * @param props.title - The title of the accordion item.
+ * @param props.children - The content to be displayed when expanded.
+ * @returns A React functional component.
+ */
 const AccordionItem: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <details className="bg-gray-800/50 border border-gray-700 rounded-lg overflow-hidden">
         <summary className="cursor-pointer p-4 font-semibold text-white text-lg hover:bg-gray-700/50">
@@ -12,14 +20,20 @@ const AccordionItem: React.FC<{ title: string; children: React.ReactNode }> = ({
     </details>
 );
 
+/**
+ * @en A tab that provides a curated collection of key legal information and procedural guides.
+ * @de Ein Tab, der eine kuratierte Sammlung von wichtigen rechtlichen Informationen und prozeduralen Anleitungen bereitstellt.
+ * @returns A React functional component.
+ */
 const LegalBasisTab: React.FC = () => {
     const { unSpecialProcedures } = legalResources;
     const { ohchrDatabases, otherKeyResources } = otherResources;
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-white">Rechtsgrundlagen & Verfahren</h1>
+            <h1 className="text-3xl font-bold text-white">Legal Basis & Procedures / Rechtsgrundlagen & Verfahren</h1>
             <p className="text-gray-400">
+                A curated collection of key legal information and procedural guides. /
                 Eine kuratierte Sammlung von wichtigen rechtlichen Informationen und prozeduralen Anleitungen.
             </p>
 
@@ -29,7 +43,7 @@ const LegalBasisTab: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 className="text-md font-semibold text-gray-200 mb-3">Checkliste für erforderliche Informationen</h3>
+                            <h3 className="text-md font-semibold text-gray-200 mb-3">Checklist for Required Information / Checkliste für erforderliche Informationen</h3>
                             <ul className="space-y-3">
                                 {unSpecialProcedures.submissionInfo.map(item => (
                                     <li key={item.title}>
@@ -42,7 +56,7 @@ const LegalBasisTab: React.FC = () => {
 
                         <div className="space-y-6">
                              <div>
-                                <h3 className="text-md font-semibold text-gray-200 mb-3">Einreichungskanäle</h3>
+                                <h3 className="text-md font-semibold text-gray-200 mb-3">Submission Channels / Einreichungskanäle</h3>
                                 <ul className="space-y-2">
                                     {unSpecialProcedures.submissionChannels.map(channel => (
                                         <li key={channel.type} className="text-sm">
@@ -53,7 +67,7 @@ const LegalBasisTab: React.FC = () => {
                                 </ul>
                             </div>
                             <div>
-                                <h3 className="text-md font-semibold text-gray-200 mb-3">Weiterführende Links</h3>
+                                <h3 className="text-md font-semibold text-gray-200 mb-3">Helpful Links / Weiterführende Links</h3>
                                  <ul className="space-y-2">
                                     {unSpecialProcedures.helpfulLinks.map(link => (
                                         <li key={link.name}>

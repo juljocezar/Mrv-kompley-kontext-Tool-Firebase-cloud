@@ -1,14 +1,32 @@
 import React, { useMemo } from 'react';
 import type { CaseEntity } from '../../types';
 
+/**
+ * @en Props for the GraphTab component.
+ * @de Props für die GraphTab-Komponente.
+ */
 interface GraphTabProps {
+    /**
+     * @en The list of all case entities, potentially with relationship data.
+     * @de Die Liste aller Fall-Entitäten, potenziell mit Beziehungsdaten.
+     */
     entities: CaseEntity[];
 }
 
+/**
+ * @en A tab for visualizing the relationships between case entities as a network graph.
+ * @de Ein Tab zur Visualisierung der Beziehungen zwischen Fall-Entitäten als Netzwerk-Graph.
+ * @param props - The component props.
+ * @returns A React functional component.
+ */
 const GraphTab: React.FC<GraphTabProps> = ({ entities }) => {
     const nodeSize = 80;
     const padding = 20;
 
+    /**
+     * @en Calculates the positions of nodes in a circular layout.
+     * @de Berechnet die Positionen der Knoten in einem kreisförmigen Layout.
+     */
     const nodes = useMemo(() => {
         const hasRelationships = entities.some(e => e.relationships && e.relationships.length > 0);
         if (!hasRelationships) return [];
@@ -36,6 +54,10 @@ const GraphTab: React.FC<GraphTabProps> = ({ entities }) => {
         });
     }, [entities]);
 
+    /**
+     * @en Creates an array of edges based on the relationships defined in the entities.
+     * @de Erstellt ein Array von Kanten basierend auf den in den Entitäten definierten Beziehungen.
+     */
     const edges = useMemo(() => {
         const edgesArr: any[] = [];
         const nodeMap = new Map(nodes.map(n => [n.id, n]));
@@ -63,8 +85,8 @@ const GraphTab: React.FC<GraphTabProps> = ({ entities }) => {
     if (entities.length === 0) {
         return (
             <div className="text-center py-12 bg-gray-800 rounded-lg">
-                <p className="text-gray-500">Keine Entitäten vorhanden, um einen Graphen zu erstellen.</p>
-                <p className="text-gray-500 text-sm mt-1">Fügen Sie Entitäten im Tab "Stammdaten" hinzu.</p>
+                <p className="text-gray-500">No entities available to create a graph. / Keine Entitäten vorhanden, um einen Graphen zu erstellen.</p>
+                <p className="text-gray-500 text-sm mt-1">Add entities in the "Entities" tab. / Fügen Sie Entitäten im Tab "Stammdaten" hinzu.</p>
             </div>
         );
     }
@@ -72,16 +94,16 @@ const GraphTab: React.FC<GraphTabProps> = ({ entities }) => {
     if (edges.length === 0) {
         return (
              <div className="text-center py-12 bg-gray-800 rounded-lg">
-                <p className="text-gray-500">Keine Beziehungen zwischen Entitäten gefunden.</p>
-                <p className="text-gray-500 text-sm mt-1">Führen Sie die Beziehungsanalyse im Tab "Stammdaten" aus.</p>
+                <p className="text-gray-500">No relationships found between entities. / Keine Beziehungen zwischen Entitäten gefunden.</p>
+                <p className="text-gray-500 text-sm mt-1">Run the relationship analysis in the "Entities" tab. / Führen Sie die Beziehungsanalyse im Tab "Stammdaten" aus.</p>
             </div>
         )
     }
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-white">Beziehungs-Graph</h1>
-            <p className="text-gray-400">Visuelle Darstellung der Beziehungen zwischen den Entitäten des Falles.</p>
+            <h1 className="text-3xl font-bold text-white">Relationship Graph / Beziehungs-Graph</h1>
+            <p className="text-gray-400">Visual representation of the relationships between case entities. / Visuelle Darstellung der Beziehungen zwischen den Entitäten des Falles.</p>
 
             <div className="w-full h-[600px] bg-gray-800 rounded-lg relative overflow-hidden">
                 <svg width="100%" height="100%" className="absolute top-0 left-0">

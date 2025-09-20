@@ -1,9 +1,25 @@
 import React from 'react';
 
+/**
+ * @en Props for the Icon component.
+ * @de Props für die Icon-Komponente.
+ */
 interface IconProps extends React.SVGProps<SVGSVGElement> {
+  /**
+   * @en The name of the icon to display.
+   * @de Der Name des anzuzeigenden Icons.
+   */
   name: string;
 }
 
+/**
+ * @en A component that renders an SVG icon based on a name prop.
+ *     It acts as a library of icons for the application.
+ * @de Eine Komponente, die ein SVG-Icon basierend auf einer `name`-Prop rendert.
+ *     Sie fungiert als Icon-Bibliothek für die Anwendung.
+ * @param props - The component props, including the icon name and any other SVG props.
+ * @returns A React functional component rendering an SVG, or null if the name is not found.
+ */
 const Icon: React.FC<IconProps> = ({ name, ...props }) => {
   switch (name) {
     case 'LayoutDashboard':
@@ -64,7 +80,7 @@ const Icon: React.FC<IconProps> = ({ name, ...props }) => {
         );
     case 'Gavel':
         return (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m14 13-7.5 7.5" /><path d="m18.5 8.5-7.5 7.5" /><path d="m12 19-7.5 2.5" /><path d="m7 14 6-6" /><path d="M16 15.5 12 12" /><path d="m22 2-6 6" /><path d="m8 8 6-6" /><path d="M9 7 3.5 1.5" /><path d="m14 12.5 5.5-5.5" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m14 13-7.5 7.5" /><path d="m18.5 8.5-7.5 7.5" /><path d="m12 19-7.5 2.5" /><path d="m7 14 6-6" /><path d="M16 15.5 12 12" /><path d="m22 2-6 6" /><path d="m8 8 6-6" /><path d="m9 7 3.5 1.5" /><path d="m14 12.5 5.5-5.5" /></svg>
         );
     case 'Mail':
         return (
