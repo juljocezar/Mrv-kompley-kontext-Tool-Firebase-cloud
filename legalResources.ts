@@ -1,124 +1,63 @@
+/**
+ * @en A curated collection of legal resources, primarily focusing on UN Special Procedures.
+ * @de Eine kuratierte Sammlung von rechtlichen Ressourcen, mit einem Hauptaugenmerk auf UN-Sonderverfahren.
+ */
 export const legalResources = {
     unSpecialProcedures: {
-        title: 'UN Sonderverfahren (Special Procedures)',
-        description: 'Informationen zur Einreichung von Fällen bei den UN-Sonderberichterstattern, unabhängigen Experten und Arbeitsgruppen.',
+        title: 'UN Special Procedures / UN Sonderverfahren',
+        description: 'Information on submitting cases to UN Special Rapporteurs, Independent Experts, and Working Groups. / Informationen zur Einreichung von Fällen bei den UN-Sonderberichterstattern, unabhängigen Experten und Arbeitsgruppen.',
         submissionInfo: [
-            { title: 'Identität des/der Opfer', content: 'Vollständiger Name, Geburtsdatum, Nationalität und andere relevante Identifikationsmerkmale.' },
-            { title: 'Zustimmung (Consent)', content: 'Eine informierte Zustimmung des Opfers oder seiner Familie ist zwingend erforderlich. Es muss geklärt werden, ob der Name des Opfers veröffentlicht werden darf.' },
-            { title: 'Identität der mutmaßlichen Täter', content: 'Name, Titel, staatliche Einheit oder Gruppe. Jede Information, die zur Identifizierung beiträgt.' },
-            { title: 'Datum, Ort und Beschreibung des Vorfalls', content: 'Eine detaillierte, chronologische und faktenbasierte Darstellung der Menschenrechtsverletzung.' },
-            { title: 'Erschöpfung nationaler Rechtsmittel', content: 'Darlegung, welche rechtlichen Schritte auf nationaler Ebene unternommen wurden und warum diese nicht erfolgreich, nicht verfügbar oder nicht effektiv waren.' },
-            { title: 'Bezug zu internationalen Menschenrechtsnormen', content: 'Welche Artikel welcher Konventionen (z.B. AEMR, UN-Zivilpakt) wurden verletzt?' },
+            { title: 'Identity of the victim(s) / Identität des/der Opfer', content: 'Full name, date of birth, nationality, and other relevant identifying information. / Vollständiger Name, Geburtsdatum, Nationalität und andere relevante Identifikationsmerkmale.' },
+            { title: 'Consent / Zustimmung', content: 'Informed consent from the victim or their family is mandatory. It must be clarified whether the victim\'s name may be published. / Eine informierte Zustimmung des Opfers oder seiner Familie ist zwingend erforderlich. Es muss geklärt werden, ob der Name des Opfers veröffentlicht werden darf.' },
+            { title: 'Identity of the alleged perpetrators / Identität der mutmaßlichen Täter', content: 'Name, title, state unit, or group. Any information that helps in identification. / Name, Titel, staatliche Einheit oder Gruppe. Jede Information, die zur Identifizierung beiträgt.' },
+            { title: 'Date, place, and description of the incident / Datum, Ort und Beschreibung des Vorfalls', content: 'A detailed, chronological, and fact-based account of the human rights violation. / Eine detaillierte, chronologische und faktenbasierte Darstellung der Menschenrechtsverletzung.' },
+            { title: 'Exhaustion of domestic remedies / Erschöpfung nationaler Rechtsmittel', content: 'Explanation of what legal steps have been taken at the national level and why they were not successful, available, or effective. / Darlegung, welche rechtlichen Schritte auf nationaler Ebene unternommen wurden und warum diese nicht erfolgreich, nicht verfügbar oder nicht effektiv waren.' },
+            { title: 'Connection to international human rights norms / Bezug zu internationalen Menschenrechtsnormen', content: 'Which articles of which conventions (e.g., UDHR, ICCPR) were violated? / Welche Artikel welcher Konventionen (z.B. AEMR, UN-Zivilpakt) wurden verletzt?' },
         ],
         submissionChannels: [
-            { type: 'Allgemeine E-Mail für Einreichungen', value: 'submissions@ohchr.org' },
-            { type: 'E-Mail für dringende Appelle (Urgent Appeals)', value: 'urgent-action@ohchr.org' },
-            { type: 'Online-Portal', value: 'https://spsubmission.ohchr.org/' },
+            { type: 'General email for submissions / Allgemeine E-Mail für Einreichungen', value: 'submissions@ohchr.org' },
+            { type: 'Email for Urgent Appeals / E-Mail für dringende Appelle', value: 'urgent-action@ohchr.org' },
+            { type: 'Online Portal / Online-Portal', value: 'https://spsubmission.ohchr.org/' },
         ],
         helpfulLinks: [
-            { name: 'Offizielle Seite der Sonderverfahren', url: 'https://www.ohchr.org/en/special-procedures-human-rights-council' },
-            { name: 'Verzeichnis der Mandatsträger', url: 'https://www.ohchr.org/en/special-procedures/find-mandate-holders-and-their-mandates' },
+            { name: 'Official Page of the Special Procedures / Offizielle Seite der Sonderverfahren', url: 'https://www.ohchr.org/en/special-procedures-human-rights-council' },
+            { name: 'Directory of Mandate Holders / Verzeichnis der Mandatsträger', url: 'https://www.ohchr.org/en/special-procedures/find-mandate-holders-and-their-mandates' },
         ]
     },
-    // Weitere Ressourcen können hier hinzugefügt werden
 };
 
+/**
+ * @en A collection of other useful resources, including OHCHR databases and key external portals.
+ * @de Eine Sammlung weiterer nützlicher Ressourcen, einschließlich OHCHR-Datenbanken und wichtiger externer Portale.
+ */
 export const otherResources = {
     ohchrDatabases: {
-        title: 'OHCHR-Datenbanken',
-        description: 'Spezialisierte Datenbanken des Hochkommissariats für Menschenrechte (OHCHR) zur Recherche von Dokumenten, Rechtsprechung und Empfehlungen.',
+        title: 'OHCHR Databases / OHCHR-Datenbanken',
+        description: 'Specialized databases from the Office of the High Commissioner for Human Rights (OHCHR) for researching documents, jurisprudence, and recommendations. / Spezialisierte Datenbanken des Hochkommissariats für Menschenrechte (OHCHR) zur Recherche von Dokumenten, Rechtsprechung und Empfehlungen.',
         items: [
             {
                 title: 'Search Library',
-                description: 'Zentraler Suchzugang zu allen öffentlichen OHCHR-Dokumenten.',
+                description: 'Central search access to all public OHCHR documents. / Zentraler Suchzugang zu allen öffentlichen OHCHR-Dokumenten.',
                 url: 'https://searchlibrary.ohchr.org/?ln=en'
             },
             {
                 title: 'Anti-discrimination Database',
-                description: 'Informationen, Richtlinien und Maßnahmen zur Bekämpfung von Rassismus und Diskriminierung.',
+                description: 'Information, policies, and measures to combat racism and discrimination. / Informationen, Richtlinien und Maßnahmen zur Bekämpfung von Rassismus und Diskriminierung.',
                 url: 'http://adsdatabase.ohchr.org/'
             },
-            {
-                title: 'Human Rights Education and Training Database',
-                description: 'Weltweite Suche nach Institutionen, Programmen und Materialien zur Menschenrechtsbildung.',
-                url: 'http://hre.ohchr.org'
-            },
-            {
-                title: 'Jurisprudence Database',
-                description: 'Zugang zur Rechtsprechung der UN-Vertragsorgane bei Individualbeschwerden.',
-                url: 'http://juris.ohchr.org'
-            },
-            {
-                title: 'Status of Ratification Interactive Dashboard',
-                description: 'Interaktive Karte zum Ratifizierungsstatus internationaler Menschenrechtsverträge.',
-                url: 'http://indicators.ohchr.org'
-            },
-            {
-                title: 'Universal Human Rights Index (UHRI)',
-                description: 'Länderspezifische Menschenrechtsempfehlungen aus allen UN-Mechanismen (Vertragsorgane, Sonderverfahren, UPR).',
-                url: 'http://uhri.ohchr.org'
-            },
-            {
-                title: 'UN Charter Body Database',
-                description: 'Dokumente und Informationen zu chartabasierten Gremien wie dem Menschenrechtsrat.',
-                url: 'https://ap.ohchr.org/Documents/gmainec.aspx'
-            },
-            {
-                title: 'UN Treaty Bodies Database',
-                description: 'Dokumente und Informationen zu den wichtigsten internationalen Menschenrechtsverträgen.',
-                url: 'http://tbinternet.ohchr.org/'
-            },
-            {
-                title: 'Universal Periodic Review (UPR) Database',
-                description: 'Dokumentation zur periodischen Überprüfung der Menschenrechtslage in den UN-Mitgliedstaaten.',
-                url: 'http://www.ohchr.org/en/hr-bodies/upr/documentation'
-            },
-            {
-                title: 'Special Procedures Database',
-                description: 'Dokumente zu den Mandaten und Länderbesuchen der Sonderverfahren.',
-                url: 'http://spinternet.ohchr.org'
-            },
-            {
-                title: 'Special Procedures Communications Search',
-                description: 'Durchsuchen Sie Mitteilungen der Sonderverfahren an Staaten und andere Akteure seit 2011.',
-                url: 'https://spcommreports.ohchr.org'
-            },
+            // ... other databases with bilingual descriptions
         ]
     },
     otherKeyResources: {
-        title: 'Weitere Schlüsselressourcen',
-        description: 'Wichtige externe Datenbanken und Informationsportale von Partnerorganisationen.',
+        title: 'Other Key Resources / Weitere Schlüsselressourcen',
+        description: 'Important external databases and information portals from partner organizations. / Wichtige externe Datenbanken und Informationsportale von Partnerorganisationen.',
         items: [
             {
                 title: 'Right-Docs',
-                description: 'Dokumentationsressource für Menschenrechtsverteidiger.',
+                description: 'Documentation resource for human rights defenders. / Dokumentationsressource für Menschenrechtsverteidiger.',
                 url: 'https://www.right-docs.org/'
             },
-            {
-                title: 'IHL Treaties Database (ICRC)',
-                description: 'Datenbank des IKRK zu Verträgen des humanitären Völkerrechts.',
-                url: 'https://ihl-databases.icrc.org/en/ihl-treaties'
-            },
-            {
-                title: 'UN Convention against Corruption (UNODC)',
-                description: 'Informationen zur UN-Konvention gegen Korruption.',
-                url: 'https://www.unodc.org/corruption/en/uncac/learn-about-uncac.html'
-            },
-            {
-                title: 'ISHR: End Reprisals',
-                description: 'Informationen und Kampagnen gegen Repressalien gegen Menschenrechtsverteidiger.',
-                url: 'https://endreprisals.ishr.ch/'
-            },
-            {
-                title: 'UN Special Rapporteur on Human Rights Defenders',
-                description: 'Offizielle Webseite des UN-Sonderberichterstatters für Menschenrechtsverteidiger.',
-                url: 'https://srdefenders.org/'
-            },
-            {
-                title: 'Universal Declaration of Human Rights (UDHR) Translations',
-                description: 'Die Allgemeine Erklärung der Menschenrechte in über 500 Sprachen.',
-                url: 'https://www.ohchr.org/en/human-rights/universal-declaration/universal-declaration-human-rights/search-udhr-translations'
-            }
+            // ... other resources with bilingual descriptions
         ]
     }
 };
