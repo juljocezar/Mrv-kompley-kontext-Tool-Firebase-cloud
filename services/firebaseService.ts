@@ -1,26 +1,6 @@
-// Fix: Changed import for initializeApp to a namespace import to resolve a module resolution error.
-import * as firebaseApp from 'firebase/app';
-import { 
-    getAuth, 
-    GoogleAuthProvider, 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
-    signInWithPopup,
-    onAuthStateChanged
-} from 'firebase/auth';
-import { 
-    getFirestore, 
-    collection, 
-    doc, 
-    onSnapshot, 
-    addDoc as fbAddDoc, 
-    updateDoc as fbUpdateDoc, 
-    getDoc as fbGetDoc, 
-    deleteDoc as fbDeleteDoc, 
-    setDoc, 
-    getDocs, 
-    writeBatch 
-} from 'firebase/firestore';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 import type { AppState, CaseContext, Risks, AppSettings, Document } from '../types';
 
@@ -34,30 +14,33 @@ const firebaseConfig = {
   appId: "your-app-id"
 };
 
-// Fix: Used the firebaseApp namespace to call initializeApp, corresponding to the import change above.
-const app = firebaseApp.initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+// Initialize Firebase using v8 compat syntax
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+export const auth = firebase.auth();
+export const db = firebase.firestore();
 
 // Use Emulators in development
 if (window.location.hostname === "localhost") {
-  // connectAuthEmulator(auth, "http://localhost:9099");
-  // connectFirestoreEmulator(db, "localhost", 8080);
+  // auth.useEmulator("http://localhost:9099");
+  // db.useEmulator("localhost", 8080);
 }
 
 // --- Generic Firestore Functions ---
 
 const getCollectionRef = (userId: string, collectionName: string) => {
-    return collection(db, 'users', userId, collectionName);
+    return db.collection('users').doc(userId).collection(collectionName);
 }
 
 const getCaseDataRef = (userId: string) => {
-    return doc(db, 'users', userId, 'caseData', 'main');
+    return db.collection('users').doc(userId).collection('caseData').doc('main');
 }
 
 export const subscribeToCollection = <T>(userId: string, collectionName: string, setData: (data: T[]) => void): (() => void) => {
-    const q = getCollectionRef(userId, collectionName);
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const query = getCollectionRef(userId, collectionName);
+    const unsubscribe = query.onSnapshot((querySnapshot) => {
         const data = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) as T[];
         setData(data);
     }, (error) => {
@@ -67,8 +50,8 @@ export const subscribeToCollection = <T>(userId: string, collectionName: string,
 };
 
 export const subscribeToCaseData = (userId: string, setData: (data: Partial<AppState> | null) => void): (() => void) => {
-     const unsubscribe = onSnapshot(getCaseDataRef(userId), (doc) => {
-        if(doc.exists()) {
+     const unsubscribe = getCaseDataRef(userId).onSnapshot((doc) => {
+        if(doc.exists) {
             setData(doc.data() as Partial<AppState>);
         } else {
             setData(null);
@@ -80,38 +63,38 @@ export const subscribeToCaseData = (userId: string, setData: (data: Partial<AppS
 }
 
 export const addDoc = async <T extends object>(userId: string, collectionName: string, data: T) => {
-    return await fbAddDoc(getCollectionRef(userId, collectionName), data);
+    return await getCollectionRef(userId, collectionName).add(data);
 }
 
 export const updateDoc = async (userId: string, collectionName: string, docId: string, data: any) => {
-    const docRef = doc(db, 'users', userId, collectionName, docId);
-    return await fbUpdateDoc(docRef, data);
+    const docRef = getCollectionRef(userId, collectionName).doc(docId);
+    return await docRef.update(data);
 }
 
 export const getDoc = async <T>(userId: string, collectionName: string, docId: string): Promise<T | null> => {
-    const docRef = doc(db, 'users', userId, collectionName, docId);
-    const docSnap = await fbGetDoc(docRef);
-    if (docSnap.exists()) {
+    const docRef = getCollectionRef(userId, collectionName).doc(docId);
+    const docSnap = await docRef.get();
+    if (docSnap.exists) {
         return { ...docSnap.data(), id: docSnap.id } as T;
     }
     return null;
 }
 
 export const deleteDoc = async (userId: string, collectionName: string, docId: string) => {
-    const docRef = doc(db, 'users', userId, collectionName, docId);
-    return await fbDeleteDoc(docRef);
+    const docRef = getCollectionRef(userId, collectionName).doc(docId);
+    return await docRef.delete();
 }
 
 export const updateCaseData = async (userId: string, data: Partial<{ caseDescription: string, risks: Risks, mitigationStrategies: string, settings: AppSettings }>) => {
-    await setDoc(getCaseDataRef(userId), data, { merge: true });
+    await getCaseDataRef(userId).set(data, { merge: true });
 }
 
 export const exportCase = async (userId: string): Promise<string> => {
     const exportData: Partial<AppState> = {};
     const collectionsToExport = ['documents', 'generatedDocuments', 'documentAnalysisResults', 'detailedAnalysisResults', 'agentActivityLog', 'kpis', 'timelineEvents', 'caseEntities', 'knowledgeItems', 'contradictions', 'tags', 'auditLog'];
 
-    const caseDataDocSnap = await fbGetDoc(getCaseDataRef(userId));
-    if(caseDataDocSnap.exists()) {
+    const caseDataDocSnap = await getCaseDataRef(userId).get();
+    if(caseDataDocSnap.exists) {
       const caseDataDoc = caseDataDocSnap.data() as CaseContext;
       exportData.caseDescription = caseDataDoc.caseDescription;
       exportData.risks = caseDataDoc.risks;
@@ -119,8 +102,8 @@ export const exportCase = async (userId: string): Promise<string> => {
     }
 
     for (const collectionName of collectionsToExport) {
-        const q = getCollectionRef(userId, collectionName);
-        const querySnapshot = await getDocs(q);
+        const query = getCollectionRef(userId, collectionName);
+        const querySnapshot = await query.get();
         (exportData as any)[collectionName] = querySnapshot.docs.map(d => ({ ...d.data(), id: d.id }));
     }
 
@@ -134,8 +117,8 @@ export const importCase = async (userId: string, jsonData: string): Promise<void
     
     // Clear existing data in batches
     for (const collectionName of collectionsToProcess) {
-        const snapshot = await getDocs(getCollectionRef(userId, collectionName));
-        const batch = writeBatch(db);
+        const snapshot = await getCollectionRef(userId, collectionName).get();
+        const batch = db.batch();
         snapshot.docs.forEach(d => batch.delete(d.ref));
         await batch.commit();
     }
@@ -147,15 +130,15 @@ export const importCase = async (userId: string, jsonData: string): Promise<void
         mitigationStrategies: importData.mitigationStrategies || '',
         settings: importData.settings
     };
-    await setDoc(getCaseDataRef(userId), caseDataToImport);
+    await getCaseDataRef(userId).set(caseDataToImport);
 
     for (const collectionName of collectionsToProcess) {
         const dataToImport = (importData as any)[collectionName];
         if (dataToImport && Array.isArray(dataToImport)) {
-             const batch = writeBatch(db);
+             const batch = db.batch();
              dataToImport.forEach(item => {
                  const { id, ...data } = item;
-                 const docRef = id ? doc(getCollectionRef(userId, collectionName), id) : doc(getCollectionRef(userId, collectionName));
+                 const docRef = id ? getCollectionRef(userId, collectionName).doc(id) : getCollectionRef(userId, collectionName).doc();
                  batch.set(docRef, data);
              });
              await batch.commit();
