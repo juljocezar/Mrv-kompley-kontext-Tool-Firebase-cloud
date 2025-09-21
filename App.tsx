@@ -48,48 +48,65 @@ import { buildCaseContext } from './utils/contextUtils';
 import { selectAgentForTask } from './utils/agentSelection';
 import { MRV_AGENTS } from './constants';
 
+/**
+ * Hauptkomponente der Anwendung.
+ * Verwaltet den gesamten Anwendungszustand, die Benutzerauthentifizierung und die Datenlogik.
+ * Dient als zentraler Controller, der die verschiedenen UI-Komponenten (Tabs) rendert und mit Daten versorgt.
+ */
 const App: React.FC = () => {
+    // =================================================================================
+    // AUTHENTIFIZIERUNGSZUSTAND (Authentication State)
+    // =================================================================================
     // Fix: Use User type from firebase/auth
-    const [user, setUser] = useState<User | null>(null);
-    const [authLoading, setAuthLoading] = useState(true);
+    const [user, setUser] = useState<User | null>(null); // Der aktuell authentifizierte Firebase-Benutzer. Null, wenn niemand angemeldet ist.
+    const [authLoading, setAuthLoading] = useState(true); // Zeigt an, ob der anfängliche Authentifizierungsstatus noch geladen wird.
     
-    const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
-    const [documents, setDocuments] = useState<Document[]>([]);
-    const [documentAnalysisResults, setDocumentAnalysisResults] = useState<DocumentAnalysisResults>({});
-    const [detailedAnalysisResults, setDetailedAnalysisResults] = useState<DetailedAnalysisResults>({});
-    const [generatedDocuments, setGeneratedDocuments] = useState<GeneratedDocument[]>([]);
-    const [caseDescription, setCaseDescription] = useState<string>('');
-    const [agentActivityLog, setAgentActivityLog] = useState<AgentActivity[]>([]);
-    const [risks, setRisks] = useState<Risks>({ physical: false, legal: false, digital: false, intimidation: false, evidenceManipulation: false, secondaryTrauma: false, burnout: false, psychologicalBurden: false });
-    const [mitigationStrategies, setMitigationStrategies] = useState<string>('');
-    const [kpis, setKpis] = useState<KPI[]>([]);
-    const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
-    const [dispatchDocument, setDispatchDocument] = useState<GeneratedDocument | null>(null);
-    const [dispatchCoverLetter, setDispatchCoverLetter] = useState<string>('');
-    const [dispatchChecklist, setDispatchChecklist] = useState<ChecklistItem[]>([]);
-    const [caseEntities, setCaseEntities] = useState<CaseEntity[]>([]);
-    const [suggestedEntities, setSuggestedEntities] = useState<SuggestedEntity[]>([]);
-    const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([]);
-    const [contradictions, setContradictions] = useState<Contradiction[]>([]);
-    const [insights, setInsights] = useState<Insight[]>([]);
-    const [pinnedInsights, setPinnedInsights] = useState<Insight[]>([]);
-    const [documentLinks, setDocumentLinks] = useState<DocumentLink[]>([]);
-    const [suggestedLinks, setSuggestedLinks] = useState<SuggestedLink[]>([]);
-    const [unSubmissions, setUnSubmissions] = useState<UNSubmission[]>([]);
-    const [ethicsAnalysis, setEthicsAnalysis] = useState<EthicsAnalysis | null>(null);
-    const [caseSummary, setCaseSummary] = useState<CaseSummary | null>(null);
-    const [settings, setSettings] = useState<AppSettings>({ ai: { temperature: 0.3, topP: 0.95 }, complexity: { low: 5, medium: 15 }});
-    const [tags, setTags] = useState<Tag[]>([]);
-    const [auditLog, setAuditLog] = useState<AuditLogEntry[]>([]);
+    // =================================================================================
+    // GLOBALER ANWENDUNGSZUSTAND (Global Application State)
+    // =================================================================================
+    const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard'); // Der aktuell ausgewählte Tab in der UI.
+    const [documents, setDocuments] = useState<Document[]>([]); // Liste aller hochgeladenen Dokumente.
+    const [documentAnalysisResults, setDocumentAnalysisResults] = useState<DocumentAnalysisResults>({}); // Ergebnisse der Dokumentenanalyse.
+    const [detailedAnalysisResults, setDetailedAnalysisResults] = useState<DetailedAnalysisResults>({}); // Ergebnisse der detaillierten Analyse.
+    const [generatedDocuments, setGeneratedDocuments] = useState<GeneratedDocument[]>([]); // Von der KI generierte Dokumente.
+    const [caseDescription, setCaseDescription] = useState<string>(''); // Die vom Benutzer eingegebene Fallbeschreibung.
+    const [agentActivityLog, setAgentActivityLog] = useState<AgentActivity[]>([]); // Protokoll der Aktionen, die von KI-Agenten ausgeführt werden.
+    const [risks, setRisks] = useState<Risks>({ physical: false, legal: false, digital: false, intimidation: false, evidenceManipulation: false, secondaryTrauma: false, burnout: false, psychologicalBurden: false }); // Identifizierte Risiken im Fall.
+    const [mitigationStrategies, setMitigationStrategies] = useState<string>(''); // Strategien zur Risikominderung.
+    const [kpis, setKpis] = useState<KPI[]>([]); // Key Performance Indicators für den Fall.
+    const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]); // Ereignisse auf der Zeitachse des Falles.
+    const [dispatchDocument, setDispatchDocument] = useState<GeneratedDocument | null>(null); // Das für den Versand ausgewählte Dokument.
+    const [dispatchCoverLetter, setDispatchCoverLetter] = useState<string>(''); // Anschreiben für den Versand.
+    const [dispatchChecklist, setDispatchChecklist] = useState<ChecklistItem[]>([]); // Checkliste für den Versand.
+    const [caseEntities, setCaseEntities] = useState<CaseEntity[]>([]); // Im Fall identifizierte Entitäten (Personen, Orte etc.).
+    const [suggestedEntities, setSuggestedEntities] = useState<SuggestedEntity[]>([]); // Von der KI vorgeschlagene Entitäten.
+    const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([]); // Einträge in der Wissensdatenbank.
+    const [contradictions, setContradictions] = useState<Contradiction[]>([]); // Gefundene Widersprüche zwischen Dokumenten.
+    const [insights, setInsights] = useState<Insight[]>([]); // Von der KI generierte Einblicke.
+    const [pinnedInsights, setPinnedInsights] = useState<Insight[]>([]); // Vom Benutzer angepinnte Einblicke.
+    const [documentLinks, setDocumentLinks] = useState<DocumentLink[]>([]); // Verknüpfungen zwischen Dokumenten.
+    const [suggestedLinks, setSuggestedLinks] = useState<SuggestedLink[]>([]); // Von der KI vorgeschlagene Verknüpfungen.
+    const [unSubmissions, setUnSubmissions] = useState<UNSubmission[]>([]); // Entwürfe für UN-Einreichungen.
+    const [ethicsAnalysis, setEthicsAnalysis] = useState<EthicsAnalysis | null>(null); // Ergebnis der Ethikanalyse.
+    const [caseSummary, setCaseSummary] = useState<CaseSummary | null>(null); // Zusammenfassung des Falles.
+    const [settings, setSettings] = useState<AppSettings>({ ai: { temperature: 0.3, topP: 0.95 }, complexity: { low: 5, medium: 15 }}); // Anwendungeinstellungen.
+    const [tags, setTags] = useState<Tag[]>([]); // Liste aller verfügbaren Tags zur Klassifizierung.
+    const [auditLog, setAuditLog] = useState<AuditLogEntry[]>([]); // Protokoll aller Benutzeraktionen.
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [loadingSection, setLoadingSection] = useState('');
-    const [isFocusMode, setIsFocusMode] = useState(false);
+    // UI-Zustand
+    const [isLoading, setIsLoading] = useState(false); // Zeigt an, ob eine globale Ladeaktion aktiv ist.
+    const [loadingSection, setLoadingSection] = useState(''); // Gibt an, welcher Bereich der App gerade lädt.
+    const [isFocusMode, setIsFocusMode] = useState(false); // Steuert den Fokusmodus (blendet Seitenleisten aus).
 
-    const [chatDocuments, setChatDocuments] = useState<Document[]>([]);
-    const [chatHistory, setChatHistory] = useState<AnalysisChatMessage[]>([]);
+    // Modal-Zustand
+    const [chatDocuments, setChatDocuments] = useState<Document[]>([]); // Dokumente, die im Analyse-Chat-Fenster verwendet werden.
+    const [chatHistory, setChatHistory] = useState<AnalysisChatMessage[]>([]); // Verlauf des aktuellen Chats.
 
-
+    /**
+     * Bündelt den gesamten Anwendungszustand in einem einzigen Objekt.
+     * `useMemo` wird verwendet, um zu verhindern, dass dieses Objekt bei jeder Neuberechnung der Komponente neu erstellt wird,
+     * was die Performance verbessert, indem unnötige Neudarstellungen von Kindkomponenten vermieden werden.
+     */
     const appState: AppState = useMemo(() => ({
         documents, documentAnalysisResults, detailedAnalysisResults, generatedDocuments, caseDescription,
         agentActivityLog, risks, mitigationStrategies, kpis, timelineEvents,
@@ -104,6 +121,17 @@ const App: React.FC = () => {
         insights, pinnedInsights, documentLinks, suggestedLinks, tags
     ]);
     
+    // =================================================================================
+    // EFFEKTE (EFFECTS)
+    // =================================================================================
+
+    /**
+     * `useEffect` für die Firebase-Authentifizierung.
+     * Dieser Hook wird nur einmal beim Mounten der Komponente ausgeführt.
+     * Er richtet einen Listener ein, der auf Änderungen des Authentifizierungsstatus reagiert (Anmelden, Abmelden).
+     * Der Listener aktualisiert den `user`-Zustand und beendet den Ladezustand.
+     * Die `unsubscribe`-Funktion wird beim Unmounten der Komponente aufgerufen, um Memory-Leaks zu verhindern.
+     */
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
             setUser(user);
@@ -112,8 +140,24 @@ const App: React.FC = () => {
         return () => unsubscribe();
     }, []);
 
+    /**
+     * `useEffect` für die Datensynchronisation mit Firebase Firestore.
+     * Dieser Hook wird immer dann ausgeführt, wenn sich das `user`-Objekt ändert.
+     *
+     * Wenn ein Benutzer angemeldet ist (`user` ist nicht null):
+     * - Erstellt er Echtzeit-Listener für alle relevanten Firestore-Collections (z.B. 'documents', 'tags').
+     * - Die Daten aus Firestore werden verwendet, um den lokalen Anwendungszustand zu aktualisieren.
+     * - Er abonniert auch die allgemeinen Falldaten.
+     *
+     * Wenn kein Benutzer angemeldet ist (`user` ist null):
+     * - Setzt er den gesamten Anwendungszustand auf die Anfangswerte zurück.
+     *
+     * Die zurückgegebene Cleanup-Funktion beendet alle Listener, wenn der Benutzer sich abmeldet oder die Komponente unmounted wird.
+     * Dies ist entscheidend, um Datenlecks und unnötige Hintergrundprozesse zu vermeiden.
+     */
     useEffect(() => {
         if (!user) {
+            // Setzt den gesamten Zustand zurück, wenn der Benutzer sich abmeldet.
             setDocuments([]);
             setDocumentAnalysisResults({});
             setDetailedAnalysisResults({});
@@ -144,7 +188,10 @@ const App: React.FC = () => {
             return;
         };
 
+        // Array zum Speichern der Unsubscribe-Funktionen für die Listener.
         const unsubs: (() => void)[] = [];
+
+        // Definiert die Zuordnung von Collection-Namen zu den entsprechenden State-Settern.
         const collections: {[key: string]: React.Dispatch<React.SetStateAction<any>>} = {
             documents: setDocuments,
             generatedDocuments: setGeneratedDocuments,
@@ -166,10 +213,12 @@ const App: React.FC = () => {
             suggestedEntities: setSuggestedEntities,
         };
 
+        // Richtet für jede Collection einen Listener ein.
         for (const [collectionName, setter] of Object.entries(collections)) {
             unsubs.push(firebaseService.subscribeToCollection(user.uid, collectionName, setter));
         }
 
+        // Richtet einen separaten Listener für die allgemeinen Falldaten ein.
         const unsubCaseData = firebaseService.subscribeToCaseData(user.uid, (data) => {
             if (data) {
                 setCaseDescription(data.caseDescription || '');
@@ -182,22 +231,42 @@ const App: React.FC = () => {
         });
         unsubs.push(unsubCaseData);
 
+        // Cleanup-Funktion: Wird beim Unmounten aufgerufen, um alle Listener zu beenden.
         return () => unsubs.forEach(unsub => unsub());
 
     }, [user]);
 
+    // =================================================================================
+    // HANDLER & LOGIK (Handlers & Logic)
+    // =================================================================================
+
+    /**
+     * Protokolliert eine vom Benutzer ausgeführte Aktion im Audit-Log.
+     * @param {string} action - Die Art der Aktion (z.B. "Tag erstellt").
+     * @param {string} details - Details zur Aktion.
+     */
     const logUserAction = useCallback(async (action: string, details: string) => {
         if (!user) return;
         const entry: Omit<AuditLogEntry, 'id'> = { timestamp: new Date().toISOString(), action, details };
         await firebaseService.addDoc(user.uid, 'auditLog', entry);
     }, [user]);
 
+    /**
+     * Protokolliert eine von einem KI-Agenten ausgeführte Aktion.
+     * @param {string} agentName - Der Name des Agenten.
+     * @param {string} action - Die vom Agenten durchgeführte Aktion.
+     * @param {'erfolg' | 'fehler'} result - Das Ergebnis der Aktion.
+     */
     const logAgentAction = useCallback(async (agentName: string, action: string, result: 'erfolg' | 'fehler') => {
         if (!user) return;
         const entry: Omit<AgentActivity, 'id'> = { timestamp: new Date().toISOString(), agentName, action, result };
         await firebaseService.addDoc(user.uid, 'agentActivityLog', entry);
     }, [user]);
 
+    /**
+     * Erstellt einen neuen Tag und speichert ihn in Firestore.
+     * @param {string} name - Der Name des neuen Tags.
+     */
     const handleCreateTag = useCallback(async (name: string) => {
         if (!user) return;
         if (name.trim() === '' || tags.some(t => t.name.toLowerCase() === name.trim().toLowerCase())) {
@@ -209,18 +278,25 @@ const App: React.FC = () => {
         logUserAction("Tag erstellt", `Name: ${name.trim()}`);
     }, [tags, user, logUserAction]);
     
+    /**
+     * Löscht einen Tag aus Firestore und entfernt ihn aus allen zugehörigen Dokumenten und Wissenseinträgen.
+     * @param {string} tagId - Die ID des zu löschenden Tags.
+     */
     const handleDeleteTag = useCallback(async (tagId: string) => {
         if (!user) return;
         const tagToDelete = tags.find(t => t.id === tagId);
         if (!tagToDelete) return;
 
+        // Lösche den Tag selbst
         await firebaseService.deleteDoc(user.uid, 'tags', tagId);
         
+        // Entferne den Tag aus allen Dokumenten, die ihn verwenden
         const docsToUpdate = documents.filter(doc => doc.tags.includes(tagToDelete.name));
         for (const doc of docsToUpdate) {
             const newTags = doc.tags.filter(t => t !== tagToDelete.name);
             await firebaseService.updateDoc(user.uid, 'documents', doc.id, { tags: newTags });
         }
+        // Entferne den Tag aus allen Wissenseinträgen, die ihn verwenden
         const itemsToUpdate = knowledgeItems.filter(item => item.tags.includes(tagToDelete.name));
         for (const item of itemsToUpdate) {
             const newTags = item.tags.filter(t => t !== tagToDelete.name);
@@ -229,16 +305,31 @@ const App: React.FC = () => {
         logUserAction("Tag gelöscht", `Name: ${tagToDelete.name}`);
     }, [user, tags, documents, knowledgeItems, logUserAction]);
 
+    /**
+     * Aktualisiert die Tags für ein bestimmtes Dokument.
+     * @param {string} docId - Die ID des Dokuments.
+     * @param {string[]} newTags - Das neue Array von Tag-Namen.
+     */
     const handleUpdateDocumentTags = useCallback(async (docId: string, newTags: string[]) => {
         if (!user) return;
         await firebaseService.updateDoc(user.uid, 'documents', docId, { tags: newTags.sort() });
     }, [user]);
 
+    /**
+     * Aktualisiert die Tags für einen bestimmten Wissenseintrag.
+     * @param {string} itemId - Die ID des Wissenseintrags.
+     * @param {string[]} newTags - Das neue Array von Tag-Namen.
+     */
     const handleUpdateKnowledgeItemTags = useCallback(async (itemId: string, newTags: string[]) => {
         if (!user) return;
         await firebaseService.updateDoc(user.uid, 'knowledgeItems', itemId, { tags: newTags.sort() });
     }, [user]);
     
+    /**
+     * Startet den Prozess zur automatischen Klassifizierung eines Dokuments mit einem KI-Agenten.
+     * Der Agent weist eine Arbeitskategorie zu und schlägt Tags vor.
+     * @param {string} docId - Die ID des zu klassifizierenden Dokuments.
+     */
     const handleAutoClassify = useCallback(async (docId: string) => {
         if (!user) return;
         await firebaseService.updateDoc(user.uid, 'documents', docId, { classificationStatus: 'classifying' });
@@ -261,6 +352,7 @@ Verfügbare Tags: ${allTags}
 
 Antworte im JSON-Format.`;
 
+            // Definiert das erwartete JSON-Schema für die Antwort der KI.
             const schema = {
                 type: Type.OBJECT,
                 properties: {
@@ -284,6 +376,7 @@ Antworte im JSON-Format.`;
 
             const suggestedTags = (rawSuggestedTags || []).map((t: any) => String(t).trim()).filter((t: string) => t);
 
+            // Erstellt neue Tags, falls die KI welche vorschlägt, die noch nicht existieren.
             if (suggestedTags.length > 0) {
                 const knownTagNames = new Set(tags.map(t => t.name.toLowerCase()));
                 const newTagsToCreate = [...new Set(
@@ -299,6 +392,7 @@ Antworte im JSON-Format.`;
                 }
             }
 
+            // Kombiniert existierende und neue Tags und entfernt Duplikate.
             const currentTags = doc.tags || [];
             const finalTags = [...new Set([...currentTags, ...suggestedTags])].sort();
 
@@ -315,6 +409,12 @@ Antworte im JSON-Format.`;
         }
     }, [user, tags, settings.ai, logAgentAction, logUserAction]);
 
+    /**
+     * Verarbeitet den Upload von Dateien.
+     * Extrahiert den Inhalt (bei Bildern/PDFs per OCR mit Gemini), speichert das Dokument in Firestore
+     * und startet den automatischen Klassifizierungsprozess.
+     * @param {File[]} files - Ein Array von Dateien, die hochgeladen werden sollen.
+     */
     const handleFileUpload = useCallback(async (files: File[]) => {
         if (!user) return;
         setIsLoading(true);
@@ -323,8 +423,10 @@ Antworte im JSON-Format.`;
         
         for (const file of files) {
             try {
+                // Extrahiert Text oder Base64-codierte Daten aus der Datei.
                 const { text, base64, mimeType } = await extractFileContent(file);
                 let content = text ?? '';
+                 // Wenn es sich um ein Bild oder PDF handelt, wird OCR mit Gemini durchgeführt.
                  if (base64 && (mimeType.startsWith('image/') || mimeType === 'application/pdf')) {
                     const agent = selectAgentForTask('information_extraction');
                     const promptParts: Part[] = [
@@ -334,9 +436,11 @@ Antworte im JSON-Format.`;
                     content = await callGeminiAPIThrottled(promptParts, null, settings.ai);
                     await logAgentAction(agent.name, `OCR für "${file.name}"`, 'erfolg');
                  }
+                // Erstellt einen Hash des Inhalts für die Chain of Custody.
                 const contentHash = await hashText(content);
                 const chainOfCustody: ChainOfCustodyEvent[] = [{ id: crypto.randomUUID(), timestamp: new Date().toISOString(), action: 'Created', contentHash }];
 
+                // Erstellt das neue Dokumentobjekt.
                 const newDoc: Omit<Document, 'id'> = {
                     name: file.name,
                     type: file.type,
@@ -349,6 +453,7 @@ Antworte im JSON-Format.`;
                     chainOfCustody: chainOfCustody,
                 };
                 const docRef = await firebaseService.addDoc(user.uid, 'documents', newDoc);
+                // Startet die automatische Klassifizierung für das neue Dokument.
                 handleAutoClassify(docRef.id);
             } catch (error) {
                 console.error("Error processing file:", file.name, error);
@@ -358,15 +463,31 @@ Antworte im JSON-Format.`;
         setIsLoading(false);
     }, [user, logUserAction, settings.ai, logAgentAction, handleAutoClassify]);
     
+    /**
+     * Öffnet das Analyse-Chat-Modal mit den ausgewählten Dokumenten.
+     * @param {Document[]} docs - Die Dokumente, die im Chat-Kontext verfügbar sein sollen.
+     */
     const handleOpenChat = (docs: Document[]) => {
         setChatDocuments(docs);
-        setChatHistory([]); // Clear history for new chat session
+        setChatHistory([]); // Leert den Chat-Verlauf für eine neue Sitzung.
     };
     
+    /**
+     * Schließt das Analyse-Chat-Modal.
+     */
     const handleCloseChat = () => {
         setChatDocuments([]);
     };
 
+    // =================================================================================
+    // RENDER-LOGIK (Render Logic)
+    // =================================================================================
+
+    /**
+     * Rendert die Komponente für den aktuell aktiven Tab.
+     * Fungiert als "Router" für den Hauptinhaltsbereich der Anwendung.
+     * @returns {React.ReactElement} Die zu rendernde Tab-Komponente.
+     */
     const renderActiveTab = () => {
         switch (activeTab) {
             case 'dashboard': return <DashboardTab documents={documents} generatedDocuments={generatedDocuments} documentAnalysisResults={documentAnalysisResults} caseDescription={caseDescription} setCaseDescription={(desc) => user && firebaseService.updateCaseData(user.uid, { caseDescription: desc })} setActiveTab={setActiveTab} onResetCase={() => {}} onExportCase={() => user && firebaseService.exportCase(user.uid).then(data => { const blob = new Blob([data], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `mrv-case-export.json`; a.click(); URL.revokeObjectURL(url); })} onImportCase={(file) => user && file.text().then(text => firebaseService.importCase(user.uid, text))} caseSummary={caseSummary} onPerformOverallAnalysis={() => {}} isLoading={isLoading} loadingSection={loadingSection} />;
@@ -392,28 +513,37 @@ Antworte im JSON-Format.`;
         }
     };
     
+    // Zeigt eine Ladeanzeige an, während der Authentifizierungsstatus überprüft wird.
     if (authLoading) {
         return <div className="flex items-center justify-center h-screen w-screen"><p className="text-white">Authentifizierung wird geladen...</p></div>;
     }
 
+    // Zeigt die Authentifizierungskomponente an, wenn kein Benutzer angemeldet ist.
     if (!user) {
         return <Auth />;
     }
 
+    // Rendert die Hauptanwendungsoberfläche, wenn ein Benutzer angemeldet ist.
     return (
         <div className="bg-gray-900 text-gray-100 flex h-screen font-sans">
+            {/* Linke Seitenleiste für die Navigation, im Fokusmodus ausgeblendet */}
             {!isFocusMode && <SidebarNav activeTab={activeTab} setActiveTab={setActiveTab} />}
+
+            {/* Hauptinhaltsbereich */}
             <main className="flex-grow flex flex-col h-screen">
                 <header className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700 p-4 flex justify-between items-center flex-shrink-0">
-                    <div>{/* Placeholder for breadcrumbs or context */}</div>
+                    <div>{/* Platzhalter für Breadcrumbs oder Kontextinformationen */}</div>
                     <FocusModeSwitcher isFocusMode={isFocusMode} toggleFocusMode={() => setIsFocusMode(!isFocusMode)} />
                 </header>
                 <div className="flex-grow p-6 overflow-y-auto">
                     {renderActiveTab()}
                 </div>
             </main>
+
+            {/* Rechte Seitenleiste für den Assistenten, im Fokusmodus ausgeblendet */}
             {!isFocusMode && <AssistantSidebar agentActivityLog={agentActivityLog} insights={insights} onGenerateInsights={()=>{}} isLoading={isLoading} loadingSection={loadingSection}/>}
 
+            {/* Chat-Modal, wird nur angezeigt, wenn Dokumente für den Chat ausgewählt wurden */}
             {chatDocuments.length > 0 && (
                 <AnalysisChatModal 
                     documents={chatDocuments}
