@@ -280,21 +280,40 @@ Antworte im JSON-Format.`;
             };
 
             const resultJson = await callGeminiAPIThrottled(prompt, schema, settings.ai);
-            const { workCategory, suggestedTags } = JSON.parse(resultJson);
+            const { workCategory, suggestedTags: rawSuggestedTags } = JSON.parse(resultJson);
+
+            const suggestedTags = (rawSuggestedTags || []).map((t: any) => String(t).trim()).filter((t: string) => t);
+
+            if (suggestedTags.length > 0) {
+                const knownTagNames = new Set(tags.map(t => t.name.toLowerCase()));
+                const newTagsToCreate = [...new Set(
+                    suggestedTags.filter(t => !knownTagNames.has(t.toLowerCase()))
+                )];
+
+                if (newTagsToCreate.length > 0) {
+                    logUserAction("Automatische Tag-Erstellung", `Neue Tags: ${newTagsToCreate.join(', ')}`);
+                    const creationPromises = newTagsToCreate.map(tagName =>
+                        firebaseService.addDoc(user.uid, 'tags', { name: tagName })
+                    );
+                    await Promise.all(creationPromises);
+                }
+            }
+
             const currentTags = doc.tags || [];
-            const newTags = [...new Set([...currentTags, ...(suggestedTags || [])])].sort();
+            const finalTags = [...new Set([...currentTags, ...suggestedTags])].sort();
 
             await firebaseService.updateDoc(user.uid, 'documents', docId, {
                 classificationStatus: 'classified',
                 workCategory: workCategory || 'Unbestimmt',
-                tags: newTags
+                tags: finalTags
             });
             logAgentAction(agent.name, `Triage für "${doc.name}" erfolgreich`, 'erfolg');
         } catch(e) {
+            console.error("Fehler bei der automatischen Klassifizierung:", e);
             await firebaseService.updateDoc(user.uid, 'documents', docId, { classificationStatus: 'failed' });
             logAgentAction(agent.name, `Triage für "${doc.name}"`, 'fehler');
         }
-    }, [user, tags, settings.ai, logAgentAction]);
+    }, [user, tags, settings.ai, logAgentAction, logUserAction]);
 
     const handleFileUpload = useCallback(async (files: File[]) => {
         if (!user) return;
