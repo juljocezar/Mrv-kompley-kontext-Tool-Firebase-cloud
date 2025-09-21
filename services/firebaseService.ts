@@ -13,10 +13,11 @@ import {
     deleteDoc as firestoreDeleteDoc, 
     setDoc, 
     getDocs, 
-    writeBatch 
+    writeBatch,
+    arrayUnion
 } from 'firebase/firestore';
 
-import type { AppState, CaseContext, Risks, AppSettings, Document } from '../types';
+import type { AppState, CaseContext, Risks, AppSettings, Document, EntityRelationship } from '../types';
 
 // TODO: Ersetzen Sie dies durch Ihre tatsächliche Firebase-Konfiguration
 const firebaseConfig = {
@@ -103,6 +104,13 @@ export const deleteDoc = async (userId: string, collectionName: string, docId: s
 export const updateCaseData = async (userId: string, data: Partial<{ caseDescription: string, risks: Risks, mitigationStrategies: string, settings: AppSettings }>) => {
     await setDoc(getCaseDataRef(userId), data, { merge: true });
 }
+
+export const addRelationshipToEntity = async (userId: string, sourceEntityId: string, relationship: EntityRelationship) => {
+    const entityRef = doc(getCollectionRef(userId, 'caseEntities'), sourceEntityId);
+    return await firestoreUpdateDoc(entityRef, {
+        relationships: arrayUnion(relationship)
+    });
+};
 
 export const exportCase = async (userId: string): Promise<string> => {
     const exportData: Partial<AppState> = {};
